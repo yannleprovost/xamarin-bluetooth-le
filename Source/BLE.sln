@@ -60,6 +60,8 @@ Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Plugin.BLE.iOS", "Plugin.BL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmCross.Plugins.BLE.macOS", "MvvmCross.Plugins.BLE.macOS\MvvmCross.Plugins.BLE.macOS.csproj", "{9530AA2D-2A0E-4AC3-93D5-28769BF43F89}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.BLE.UWP", "Plugin.BLE.UWP\Plugin.BLE.UWP.csproj", "{CCD85512-A2D7-4076-B31D-7A24829058AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
