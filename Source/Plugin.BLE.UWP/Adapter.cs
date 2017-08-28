@@ -31,6 +31,8 @@ namespace Plugin.BLE.UWP
 
             _bleWatcher = new BluetoothLEAdvertisementWatcher { ScanningMode = ScanMode == ScanMode.Passive ? BluetoothLEScanningMode.Passive : BluetoothLEScanningMode.Active };
 
+            DiscoveredDevices.Clear();
+            _prevScannedDevices = new List<ulong>();
             Trace.Message("Starting a scan for devices.");
             if (hasFilter)
             {
