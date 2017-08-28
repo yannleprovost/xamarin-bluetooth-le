@@ -12,6 +12,10 @@ using Windows.Devices.Bluetooth.Advertisement;
 
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
+using System.Threading;
+using Microsoft.Toolkit.Uwp;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Plugin.BLE.Extensions;
 
 namespace Plugin.BLE.UWP
 {
@@ -29,9 +33,11 @@ namespace Plugin.BLE.UWP
         {
             var hasFilter = serviceUuids?.Any() ?? false;
 
-            _bleWatcher = new BluetoothLEAdvertisementWatcher { ScanningMode = ScanMode == ScanMode.Passive ? BluetoothLEScanningMode.Passive : BluetoothLEScanningMode.Active };
-
             DiscoveredDevices.Clear();
+            _BleWatcher = new BluetoothLEAdvertisementWatcher
+            {
+                ScanningMode = ScanMode.ToNative()
+            };
             _prevScannedDevices = new List<ulong>();
             Trace.Message("Starting a scan for devices.");
             if (hasFilter)
