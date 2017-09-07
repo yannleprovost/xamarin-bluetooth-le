@@ -69,56 +69,45 @@ namespace Plugin.BLE.UWP
         {
             Trace.Message($"Connecting to device with ID:  {device.Id.ToString()}");
 
-            if (!(device.NativeDevice is ObservableBluetoothLEDevice nativeDevice))
+            ObservableBluetoothLEDevice nativeDevice = device.NativeDevice as ObservableBluetoothLEDevice;
+            if (nativeDevice == null)
                 return;
 
-            // nativeDevice.PropertyChanged -= Device_ConnectionStatusChanged;
-            nativeDevice.PropertyChanged += Device_ConnectionStatusChanged;
-
-            ConnectedDeviceRegistry[device.Id.ToString()] = device;
+            nativeDevice.PropertyChanged += Device_PropertyChanged;
 
             await nativeDevice.ConnectAsync();
+
+            var uwpDevice = (Device)device;
+            if (!ConnectedDeviceRegistry.ContainsKey(uwpDevice.Id.ToString()))
+                ConnectedDeviceRegistry.Add(uwpDevice.Id.ToString(), device);
         }
 
-        private void Device_ConnectionStatusChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        private void Device_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (!(sender is ObservableBluetoothLEDevice nativeDevice) || nativeDevice.BluetoothLEDevice == null)
-            {
+            if (e.PropertyName != "IsConnected")
                 return;
-            }
 
-            if (propertyChangedEventArgs.PropertyName != nameof(nativeDevice.IsConnected))
-            {
+            ObservableBluetoothLEDevice nativeDevice = sender as ObservableBluetoothLEDevice;
+            if (nativeDevice == null)
                 return;
-            }
 
-            var address = ParseDeviceId(nativeDevice.BluetoothLEDevice.BluetoothAddress).ToString();
-            if (nativeDevice.IsConnected && ConnectedDeviceRegistry.TryGetValue(address, out var connectedDevice))
-            {
-                HandleConnectedDevice(connectedDevice);
+            Guid id = new Device(this, nativeDevice.BluetoothLEDevice, 0, String.Empty).Id;
+
+            ConnectedDeviceRegistry.TryGetValue(id.ToString(), out IDevice device);
+            if (device == null)
                 return;
-            }
 
-            if (!nativeDevice.IsConnected && ConnectedDeviceRegistry.TryRemove(address, out var disconnectedDevice))
-            {
-                HandleDisconnectedDevice(false, disconnectedDevice);
-            }
+            if (nativeDevice.IsConnected)
+                HandleConnectedDevice(device);
+            else
+                HandleDisconnectedDevice(false, device);
         }
 
         protected override void DisconnectDeviceNative(IDevice device)
         {
             // Windows doesn't support disconnecting, so currently just dispose of the device
             Trace.Message($"Disconnected from device with ID:  {device.Id.ToString()}");
-
-            if (device.NativeDevice is ObservableBluetoothLEDevice nativeDevice)
-            {
-                nativeDevice.PropertyChanged -= Device_ConnectionStatusChanged;
-                nativeDevice.BluetoothLEDevice.Dispose();
-
-                ConnectedDeviceRegistry.TryRemove(device.Id.ToString(), out _);
-            }
-
-            this.HandleDisconnectedDevice(true, device);
+            ConnectedDeviceRegistry.Remove(device.Id.ToString());
         }
 
         public override async Task<IDevice> ConnectToKnownDeviceAsync(Guid deviceGuid, ConnectParameters connectParameters = default, CancellationToken cancellationToken = default)
