@@ -12,9 +12,6 @@ using Windows.Devices.Bluetooth.Advertisement;
 
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
-using System.Threading;
-using Microsoft.Toolkit.Uwp;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Plugin.BLE.Extensions;
 
 namespace Plugin.BLE.UWP
