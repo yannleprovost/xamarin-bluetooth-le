@@ -25,6 +25,18 @@ namespace Plugin.BLE.UWP
             Id = id;
             Name = nativeDevice.Name;
             AdvertisementRecords = advertisementRecords;
+            _nativeDevice.PropertyChanged += NativeDevice_PropertyChanged;
+        }
+
+        public delegate void ConnectionStatusChangedHandler(Device device, BluetoothConnectionStatus status);
+        public ConnectionStatusChangedHandler ConnectionStatusChanged;
+
+        private void NativeDevice_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != "IsConnected")
+                return;
+
+            ConnectionStatusChanged?.Invoke(this, _nativeDevice.BluetoothLEDevice.ConnectionStatus);
         }
 
         internal void Update(short btAdvRawSignalStrengthInDBm, IReadOnlyList<AdvertisementRecord> advertisementData)
