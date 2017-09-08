@@ -81,6 +81,13 @@ On MacOS (version 11 and above) you must add the following keys to your `Info.pl
     <!--Description of the Bluetooth request message-->
     <key>NSBluetoothAlwaysUsageDescription</key>
     <string>YOUR CUSTOM MESSAGE</string>
+**UWP**
+
+Add this line to the Package Manifest (.appxmanifest):
+
+```xml
+<DeviceCapability Name="bluetooth" />
+```
 
 ## Sample app
 
