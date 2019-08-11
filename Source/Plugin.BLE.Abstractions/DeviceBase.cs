@@ -42,7 +42,7 @@ namespace Plugin.BLE.Abstractions
         public int Rssi { get; protected set; }
         public int Channel { get; protected set; }
         public DeviceState State => GetState();
-        public IList<AdvertisementRecord> AdvertisementRecords { get; protected set; }
+        public IReadOnlyList<AdvertisementRecord> AdvertisementRecords { get; protected set; }
         public abstract object NativeDevice { get; }
 
         CancellationTokenSource ICancellationMaster.TokenSource { get; set; } = new CancellationTokenSource();
