@@ -1,20 +1,11 @@
 # Changelog
 
-## 2.1 MacOS  
+## 2.2.0 UWP
+#### 2.2.0-pre.1
+    - UWP support pre-release
 
-### 2.1.2
-- Correctly close a gatt when a connection attempt is cancelled (fixes #484)
-- Use NSBluetoothAlwaysUsageDescription in iOS and macOS samples (fixes #455, #498)
-- Android: enable BT5 advertising extensions (fixes #495)
-- Fixed cake build and updated build instructions (fixes #492)
-- Added locking to DeviceBase.KnownServices (fixes #406)
-- Updated Mac project to output the same filename as the other platforms (fixes #430, #491)
-- Added iOS/Mac support for 32-bit and 16-bit Service UUIDs (fixes #445)
 
-### 2.1.1 Service Release for 2.1.0
-- [iOS] #373, #377 Fixed trace ouptut that caused NRE.
-
-### 2.1.0 Stable Release MacOS
+## 2.1.0 MacOS  
 - Use IReadOnlyLists for Services/Charactersitics/Descriptors and concurrent collections for DiscoveredDevices/ConnectedDevices
 Should prevent crashes like: #320
 
