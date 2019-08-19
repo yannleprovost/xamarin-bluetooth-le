@@ -36,7 +36,7 @@ namespace Plugin.BLE.Abstractions
     public abstract class DeviceBase : IDevice, ICancellationMaster
     {
         protected readonly IAdapter Adapter;
-        private readonly List<IService> KnownServices = new List<IService>();
+        protected readonly Dictionary<Guid, IService> KnownServices = new Dictionary<Guid, IService>();
         public Guid Id { get; protected set; }
         public string Name { get; protected set; }
         public int Rssi { get; protected set; }
@@ -54,30 +54,31 @@ namespace Plugin.BLE.Abstractions
 
         public async Task<IReadOnlyList<IService>> GetServicesAsync(CancellationToken cancellationToken = default)
         {
-            lock (KnownServices)
-            {
-                if (KnownServices.Any())
-                {
-                    return KnownServices.ToArray();
-                }
-            }
-
             using (var source = this.GetCombinedSource(cancellationToken))
             {
-                var services = await GetServicesNativeAsync();
-
-                lock (KnownServices)
+                foreach (var service in await GetServicesNativeAsync())
                 {
-                    KnownServices.AddRange(services);
-                    return KnownServices.ToArray();
+                    KnownServices[service.Id] = service;
                 }
             }
+
+            return KnownServices.Values.ToList();
         }
 
         public async Task<IService> GetServiceAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var services = await GetServicesAsync(cancellationToken);
-            return services.ToList().FirstOrDefault(x => x.Id == id);
+            if (KnownServices.ContainsKey(id))
+            {
+                return KnownServices[id];
+            }
+
+            var service = await GetServiceNativeAsync(id);
+            if (service == null)
+            {
+                return null;
+            }
+
+            return KnownServices[id] = service;
         }
 
         public async Task<int> RequestMtuAsync(int requestValue)
@@ -93,6 +94,7 @@ namespace Plugin.BLE.Abstractions
         public abstract Task<bool> UpdateRssiAsync();
         protected abstract DeviceState GetState();
         protected abstract Task<IReadOnlyList<IService>> GetServicesNativeAsync();
+        protected abstract Task<IService> GetServiceNativeAsync(Guid id);
         protected abstract Task<int> RequestMtuNativeAsync(int requestValue);
         protected abstract bool UpdateConnectionIntervalNative(ConnectionInterval interval);
 
@@ -101,16 +103,16 @@ namespace Plugin.BLE.Abstractions
             return Name;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Adapter.DisconnectDeviceAsync(this);
         }
 
-        public void ClearServices()
+        public void DisposeServices()
         {
             this.CancelEverythingAndReInitialize();
 
-            lock (KnownServices)
+            foreach (var service in KnownServices.Values)
             {
                 foreach (var service in KnownServices)
                 {
@@ -140,7 +142,7 @@ namespace Plugin.BLE.Abstractions
                 return false;
             }
 
-            var otherDeviceBase = (DeviceBase) other;
+            var otherDeviceBase = (DeviceBase)other;
             return Id == otherDeviceBase.Id;
         }
 

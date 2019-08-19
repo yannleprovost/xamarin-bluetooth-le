@@ -37,5 +37,11 @@ namespace Plugin.BLE.UWP
                 .Cast<ICharacteristic>()
                 .ToList();
         }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            _nativeService?.Dispose();
+        }
     }
 }

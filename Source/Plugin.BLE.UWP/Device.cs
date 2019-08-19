@@ -13,7 +13,7 @@ using Plugin.BLE.Extensions;
 
 namespace Plugin.BLE.UWP
 {
-    public class Device : DeviceBase
+    public class Device : DeviceBase, IDisposable
     {
         private readonly ObservableBluetoothLEDevice _nativeDevice;
         public override object NativeDevice => _nativeDevice;
@@ -64,6 +64,15 @@ namespace Plugin.BLE.UWP
                 .Select(nativeService => new Service(nativeService, this))
                 .Cast<IService>()
                 .ToList();
+        }
+
+        protected override async Task<IService> GetServiceNativeAsync(Guid id)
+        {
+            var result = await _nativeDevice.BluetoothLEDevice.GetGattServicesForUuidAsync(id, BleImplementation.CacheModeGetServices);
+            result.ThrowIfError();
+
+            var nativeService = result.Services?.FirstOrDefault();
+            return nativeService != null ? new Service(nativeService, this) : null;
         }
 
         protected override DeviceState GetState()
