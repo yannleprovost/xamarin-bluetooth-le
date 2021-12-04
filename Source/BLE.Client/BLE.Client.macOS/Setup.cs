@@ -11,11 +11,30 @@ using MvvmCross.IoC;
 using Plugin.Permissions.Abstractions;
 using Plugin.Settings;
 using Xamarin.Forms;
+using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Extensions.Logging;
 
 namespace BLE.Client.macOS
 {
     public class Setup : MvxFormsMacSetup<BleMvxApplication, BleMvxFormsApp>
     {
+        protected override ILoggerProvider CreateLogProvider()
+        {
+            return new SerilogLoggerProvider();
+        }
+
+        protected override ILoggerFactory CreateLogFactory()
+        {
+            // serilog configuration
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.NSLog()
+                .CreateLogger();
+
+            return new SerilogLoggerFactory();
+        }
+
         protected override IMvxIoCProvider InitializeIoC()
         {
             var result = base.InitializeIoC();
