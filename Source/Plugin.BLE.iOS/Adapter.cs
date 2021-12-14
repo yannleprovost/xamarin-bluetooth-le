@@ -39,7 +39,14 @@ namespace Plugin.BLE.iOS
                     name = ((NSString)e.AdvertisementData.ValueForKey(CBAdvertisement.DataLocalNameKey)).ToString();
                 }
 
-                var device = new Device(this, e.Peripheral, _bleCentralManagerDelegate, name, e.RSSI.Int32Value,
+                NSNumber channel = -1;
+                var channel_key = new NSString("kCBAdvDataChannel");
+                if (e.AdvertisementData.ContainsKey(channel_key))
+                {
+                    channel = (NSNumber)e.AdvertisementData.ObjectForKey(channel_key);
+                }
+                
+                var device = new Device(this, e.Peripheral, _bleCentralManagerDelegate, name, e.RSSI.Int32Value, channel.Int32Value,
                     ParseAdvertismentData(e.AdvertisementData));
                 HandleDiscoveredDevice(device);
             };
@@ -247,7 +254,7 @@ namespace Plugin.BLE.iOS
             }
 
 
-            var device = new Device(this, peripherial, _bleCentralManagerDelegate, peripherial.Name, peripherial.RSSI?.Int32Value ?? 0, new List<AdvertisementRecord>());
+            var device = new Device(this, peripherial, _bleCentralManagerDelegate, peripherial.Name, peripherial.RSSI?.Int32Value ?? 0, -1, new List<AdvertisementRecord>());
 
             await ConnectToDeviceAsync(device, connectParameters, cancellationToken);
             return device;

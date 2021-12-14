@@ -27,6 +27,12 @@ namespace Plugin.BLE.Abstractions.Contracts
         int Rssi { get; }
 
         /// <summary>
+        /// Broadcast channel 37,38 or 39 if known or -1.
+        /// </summary>
+        int Channel { get; }
+
+
+        /// <summary>
         /// Gets the native device object reference. Should be cast to the 
         /// appropriate type on each platform.
         /// </summary>

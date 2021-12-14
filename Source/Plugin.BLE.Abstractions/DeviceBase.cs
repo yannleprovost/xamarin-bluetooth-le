@@ -40,6 +40,7 @@ namespace Plugin.BLE.Abstractions
         public Guid Id { get; protected set; }
         public string Name { get; protected set; }
         public int Rssi { get; protected set; }
+        public int Channel { get; protected set; }
         public DeviceState State => GetState();
         public IList<AdvertisementRecord> AdvertisementRecords { get; protected set; }
         public abstract object NativeDevice { get; }

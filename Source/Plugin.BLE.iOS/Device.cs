@@ -18,12 +18,12 @@ namespace Plugin.BLE.iOS
         public override object NativeDevice => _nativeDevice;
 
         public Device(Adapter adapter, CBPeripheral nativeDevice, IBleCentralManagerDelegate bleCentralManagerDelegate)
-            : this(adapter, nativeDevice, bleCentralManagerDelegate, nativeDevice.Name, nativeDevice.RSSI?.Int32Value ?? 0,
+            : this(adapter, nativeDevice, bleCentralManagerDelegate, nativeDevice.Name, nativeDevice.RSSI?.Int32Value ?? 0, -1,
                 new List<AdvertisementRecord>())
         {
         }
 
-        public Device(Adapter adapter, CBPeripheral nativeDevice, IBleCentralManagerDelegate bleCentralManagerDelegate, string name, int rssi, List<AdvertisementRecord> advertisementRecords) 
+        public Device(Adapter adapter, CBPeripheral nativeDevice, IBleCentralManagerDelegate bleCentralManagerDelegate, string name, int rssi, int channel, List<AdvertisementRecord> advertisementRecords) 
             : base(adapter)
         {
             _nativeDevice = nativeDevice;
@@ -33,6 +33,7 @@ namespace Plugin.BLE.iOS
             Name = name;
 
             Rssi = rssi;
+            Channel = channel;
             AdvertisementRecords = advertisementRecords;
 
             // TODO figure out if this is in any way required,  
