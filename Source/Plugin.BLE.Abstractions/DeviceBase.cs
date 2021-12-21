@@ -115,16 +115,13 @@ namespace Plugin.BLE.Abstractions
 
             foreach (var service in KnownServices.Values)
             {
-                foreach (var service in KnownServices)
+                try
                 {
-                    try
-                    {
-                        service.Dispose();
-                    }
-                    catch (Exception ex)
-                    {
-                        Trace.Message("Exception while cleanup of service: {0}", ex.Message);
-                    }
+                    service.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    Trace.Message("Exception while cleanup of service: {0}", ex.Message);
                 }
 
                 KnownServices.Clear();

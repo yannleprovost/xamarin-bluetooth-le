@@ -20,7 +20,7 @@ namespace Plugin.BLE.iOS
         {
         }
 
-        public Device(Adapter adapter, CBPeripheral nativeDevice, IBleCentralManagerDelegate bleCentralManagerDelegate, string name, int rssi, List<AdvertisementRecord> advertisementRecords)
+        public Device(Adapter adapter, CBPeripheral nativeDevice, IBleCentralManagerDelegate bleCentralManagerDelegate, string name, int rssi, int channel, List<AdvertisementRecord> advertisementRecords)
             : base(adapter, nativeDevice)
         {
             _bleCentralManagerDelegate = bleCentralManagerDelegate;
